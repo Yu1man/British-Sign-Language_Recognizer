@@ -1,0 +1,167 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color:#1b1b1a;
+    font-weight: bold;
+    color: #ed8209;
+}
+
+.top-section{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;    
+    text-align: center;
+    justify-content: center;
+}
+
+.container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Layout Wrapper */
+.main-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+/* Left Section (Video & Detection Info) */
+.left-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+    margin-top: 50px; /* Reduce the margin-top to bring it closer */
+}
+
+/* Right Section (Controls, Images, and Generated Alphabet) */
+.right-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+    margin-top: 150px; /* Reduce the margin-top to bring it closer */
+}
+
+/* Dropdown */
+.alphabet-dropdown {
+    font-size: 16px;
+    margin-top: 20px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Image Styles */
+.image-wrapper {
+    margin-top: 20px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.bsl-image {
+    width: 200px; /* Fixed width */
+    height: 200px; /* Fixed height */
+    object-fit: cover; /* Ensures the image covers the area without distortion */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.other-image {
+    width: 500px; /* Larger width */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.other-image{
+    display: none;
+}
+
+/* Video Feed */
+.video-feed img {
+    border-radius: 10px;
+    width: 640px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Generated Alphabet */
+.generated-alphabet {
+    font-size: 70px;
+    font-weight: bold;
+    color: #e67e22;
+    display: none;
+    margin-left: 40px;
+}
+
+/* Detection Info */
+.detection-info {
+    display: flex;               /* Use flexbox to display items horizontally */
+    justify-content: center;     /* Center the items horizontally */
+    gap: 20px;                   /* Add space between the label and confidence */
+    margin-top: 15px;
+    font-size: 70px;
+    font-weight: bold;
+    padding: 1px;
+    text-align: center;
+    width: 100%;                 /* Ensure it takes up full width */
+}
+
+
+/* Layout for Buttons */
+.button-wrapper {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.left-buttons {
+    display: flex;
+    justify-content: center; /* Center under the video */
+    gap: 10px; /* Space between buttons */
+    margin-top: 20px;
+}
+
+/* Right-side Buttons (Toggle & Switch Image) */
+.right-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Buttons */
+.button {
+    font-size: 12px;
+    padding: 12px 24px;
+    width: 200px; /* Set uniform width */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    color: #272625;
+}
+
+/* Button Color Transition */
+.start-random {
+    background-color: #ff0202;
+}
+
+.stop-random{
+    background-color: #06de2a;
+}
+
+
+.toggle-image { background-color: #ffffff; }
+.switch-image { background-color: #ffffff; }

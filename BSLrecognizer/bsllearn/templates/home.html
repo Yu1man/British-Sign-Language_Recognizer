@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} British Sign Language Teaching {% endblock %}
+
+{% block content %}
+<div class="top-section">
+    <H2>British Sign Language Learning Tool</H2>
+    <p>This website aims to let users learn and pratice British Sign Language</p>
+</div>
+<div class="main-wrapper">
+    <!-- Left Section: Video -->
+    <div class="left-section">
+
+        <!-- Video -->
+        <div class="video-feed">
+            <h2>Do the BSL !</h2>
+            <img src="{% url 'video_feed' %}" alt="Video Feed">
+        </div>
+
+        <!-- Start & Stop Random Button -->
+        <div class="left-buttons">
+            <button id="startStopRandom" class="button start-random">Start Random Alphabet</button>
+        </div>
+
+        <!--  Detection info -->
+        <div class="detection-info">
+            <div id="generated-alphabet" class="generated-alphabet" style="display: none;"></div>
+            <span id="detection-label">None</span></p>
+            <span id="detection-confidence">0.00</span></>
+        </div>
+    </div>
+
+
+    <!-- Right Section -->
+    <div class="right-section">
+
+         <!-- Alphabet Select Button  -->
+        <label for="alphabet">Select Alphabet:</label>
+        <select id="alphabet" name="alphabet" class="alphabet-dropdown" onchange="updateImage()">
+            {% for letter in alphabet %}
+                <option value="{{ letter }}">{{ letter }}</option>
+            {% endfor %}
+        </select>
+
+        <!-- Reference Images-->
+        <div class="image-wrapper">
+            <img id="bslImage" src="{% static 'Alphabet/A.jpg' %}" class="bsl-image">
+            <img id="allImage" src="{% static 'fingerspelling.jpg' %}" class="other-image">
+        </div>
+
+        <!-- Toggle Image & Switch Image Buttons -->
+        <div class="right-buttons">
+            <button id="toggleImage" class="button toggle-image">Hide demonstration</button>
+            <button id="switchImage" class="button switch-image">All Alphabet Image</button>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+    let randomMode = false;
+    let intervalId;
+    let imageVisible = true;
+    let showingAlphabetImage = true;
+
+    // Track the selected letter
+    let selectedLetter = document.getElementById("alphabet").value;
+
+    // Update the selected letter 
+    document.getElementById("alphabet").addEventListener("change", function() {
+        selectedLetter = this.value;
+        if (showingAlphabetImage) {
+            updateImage();
+        }
+    });
+
+    // Function to fetch detection info
+    function fetchDetectionInfo() {
+        fetch("{% url 'detection_info' %}")
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.label !== "None" && data.label === selectedLetter) {
+                    document.getElementById("detection-label").textContent = data.label;
+                    document.getElementById("detection-confidence").textContent = data.confidence.toFixed(2);
+
+                    // Only generate the next random letter if confidence is above 0.8
+                    if (randomMode && data.confidence > 0.8) {
+                        generateRandomLetter();
+                    }
+                } else if (data && data.label !== "None" && data.label !== selectedLetter) {
+                    document.getElementById("detection-label").textContent = "That's seems not" + '\t' + selectedLetter;
+                }
+            })
+            .catch(error => {
+                console.log("Error fetching detection info:", error);
+            });
+    }
+
+    // Function to generate a random letter (excluding H and J)
+    function generateRandomLetter() {
+        let randomLetter;
+        do {
+            randomLetter = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+        } while (randomLetter === 'H' || randomLetter === 'J'); // Exclude H and J
+
+        selectedLetter = randomLetter;
+        document.getElementById("alphabet").value = randomLetter;
+        updateGeneratedAlphabetDisplay(randomLetter); // Update the displayed letter
+        updateImage();
+    }
+
+    // Function to update the displayed alphabet
+    function updateGeneratedAlphabetDisplay(letter) {
+        const generatedAlphabetDiv = document.getElementById("generated-alphabet");
+        generatedAlphabetDiv.textContent = letter;
+        generatedAlphabetDiv.style.display = "block"; // Show the generated alphabet text
+    }
+
+    // Function to start/stop random alphabet generation
+    document.getElementById("startStopRandom").addEventListener("click", function() {
+        if (randomMode) {
+            // Stop Random Mode
+            randomMode = false;
+            clearInterval(intervalId);
+
+            // Show the select dropdown menu
+            document.getElementById("alphabet").style.display = "block";
+
+            // Show the detection label
+            document.getElementById("detection-label").style.display = "inline";
+            document.getElementById("generated-alphabet").style.display = "none"; // Hide generated alphabet
+            this.textContent = "Start Random Alphabet";
+            this.classList.remove("stop-random");
+            this.classList.add("start-random");  // Switch button style back to "Start"
+        } else {
+            // Start Random Mode
+            randomMode = true;
+            generateRandomLetter();
+            intervalId = setInterval(fetchDetectionInfo, 250);
+
+            // Hide the select dropdown menu
+            document.getElementById("alphabet").style.display = "none";
+
+            // Hide the detection label during random mode
+            document.getElementById("detection-label").style.display = "none";
+            this.textContent = "Stop Random Alphabet";
+            this.classList.remove("start-random");
+            this.classList.add("stop-random");  // Switch button style to "Stop"
+        }
+    });
+
+    // Function to toggle the visibility of the alphabet image
+    document.getElementById("toggleImage").addEventListener("click", function() {
+        imageVisible = !imageVisible;
+        if (showingAlphabetImage) {
+            document.getElementById("bslImage").style.display = imageVisible ? "inline-block" : "none";
+        } else {
+            document.getElementById("allImage").style.display = imageVisible ? "inline-block" : "none";
+        }
+        this.textContent = imageVisible ? "Hide Demonstration" : "Show Demonstration";
+    });
+
+    // Function to switch between the alphabet image and the all image
+    document.getElementById("switchImage").addEventListener("click", function() {
+        showingAlphabetImage = !showingAlphabetImage;
+        if (showingAlphabetImage) {
+            document.getElementById("bslImage").style.display = imageVisible ? "inline-block" : "none";
+            document.getElementById("allImage").style.display = "none";
+            updateImage();
+        } else {
+            document.getElementById("bslImage").style.display = "none";
+            document.getElementById("allImage").style.display = imageVisible ? "inline-block" : "none";
+        }
+        this.textContent = showingAlphabetImage ? "All Alphabet Image" : "Selected Alphabet Image";
+    });
+
+    // Function to update the image based on the selected letter
+    function updateImage() {
+        if (showingAlphabetImage) {
+            var selectedLetter = document.getElementById("alphabet").value;
+            document.getElementById("bslImage").src = "/static/Alphabet/" + selectedLetter + ".jpg";
+        }
+    }
+
+    // Fetch detection info every second
+    setInterval(fetchDetectionInfo, 50);
+
+</script>
+{% endblock %}
